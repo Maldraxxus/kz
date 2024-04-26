@@ -1,0 +1,77 @@
+package com.example.myapplication111
+
+import kotlin.math.absoluteValue
+
+class Fraction(var numerator: Int, var denominator: Int) {
+
+    init {
+        require(denominator != 0) { "Знаменатель не может быть равен нулю." }
+        simplify()
+    }
+
+    private fun simplify() {
+        val gcd = gcd(numerator, denominator)
+        numerator /= gcd
+        denominator /= gcd
+    }
+
+    private fun gcd(a: Int, b: Int): Int {
+        var x = a.absoluteValue
+        var y = b.absoluteValue
+        while (y != 0) {
+            val temp = y
+            y = x % y
+            x = temp
+        }
+        return x
+    }
+
+    private fun lcm(a: Int, b: Int): Int {
+        return (a * b).absoluteValue / gcd(a, b)
+    }
+
+    operator fun plus(other: Fraction): Fraction {
+        val lcm = lcm(this.denominator, other.denominator)
+        val newNumerator = this.numerator * (lcm / this.denominator) + other.numerator * (lcm / other.denominator)
+        return Fraction(newNumerator, lcm)
+    }
+
+    operator fun minus(other: Fraction): Fraction {
+        val lcm = lcm(this.denominator, other.denominator)
+        val newNumerator = this.numerator * (lcm / this.denominator) - other.numerator * (lcm / other.denominator)
+        return Fraction(newNumerator, lcm)
+    }
+
+    operator fun times(other: Fraction): Fraction {
+        val newNumerator = this.numerator * other.numerator
+        val newDenominator = this.denominator * other.denominator
+        return Fraction(newNumerator, newDenominator)
+    }
+
+    operator fun div(other: Fraction): Fraction {
+        val newNumerator = this.numerator * other.denominator
+        val newDenominator = this.denominator * other.numerator
+        return Fraction(newNumerator, newDenominator)
+    }
+
+    override fun toString(): String {
+        return "$numerator/$denominator"
+    }
+}
+
+fun main() {
+    val fraction1 = Fraction(1, 2)
+    val fraction2 = Fraction(3, 4)
+
+    val sum = fraction1 + fraction2
+    println("Сумма: $sum")
+
+    val difference = fraction1 - fraction2
+    println("Разность: $difference")
+
+    val product = fraction1 * fraction2
+    println("Произведение: $product")
+
+    val quotient = fraction1 / fraction2
+    println("Частное: $quotient")
+}
